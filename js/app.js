@@ -1,7 +1,7 @@
 
 function GetUserInfo() {
     this.user = {name: '', budget: 0, maxBudget: 0}
-    this.user.name = 'Игрок'; //prompt('Ваше имя');
+    this.user.name = prompt('Ваше имя');
     this.user.budget = 1000; //+prompt('Стартовый бюджет:');
     this.user.maxBudget = 10000; //+prompt('Играем до:');
     return this.user;
@@ -40,24 +40,37 @@ function createGameAlert (type, text) {
     gameAlert.innerHTML = text;
 }
 
+function createDicesAlert (type, text) {
+    if (document.getElementById("diceAlert")){
+        diceAlert.remove();
+    }        
+    let div = document.createElement('div');
+    div.className = `alert alert-${type}`;
+    div.role ="alert";
+    div.id = "diceAlert";
+    message.prepend(div);
+    diceAlert.innerHTML = text;
+}
+
 function letGame () {
     if (gamer.budget > 0 && gamer.budget < gamer.maxBudget) {
         let bet = +inputBet.value;
         let number = +inputNumber.value;
         let step = new RollTheDices();
         history.push(step);
-        console.log(`Выпало: ${step.summ}. (${step.dice1} и ${step.dice2}).`);
+        createDicesAlert('primary', `Выпало <span class="badge badge-primary result">${step.summ}</span> (${step.dice1} и ${step.dice2}).`);
+        // console.log(`Выпало: ${step.summ}. (${step.dice1} и ${step.dice2}).`);
             switch (true) {
                 case (step.dice1 == step.dice2 && step.summ == number):
-                    createGameAlert('info', `Вы загадывали ${number}. Вы угадали и кости совпали. ставка х3`);
+                    createGameAlert('info', `Вы загадали <span class="badge badge-info result">${number}</span>. Вы угадали и кости совпали! ставка х3`);
                     gamer.budget += (bet*3);
                 break;
                 case (step.summ == number):
-                    createGameAlert('success', `Вы загадывали ${number} и угадали. ставка х2`);
+                    createGameAlert('success', `Вы загадали <span class="badge badge-success result">${number}</span> и угадали. ставка х2`);
                     gamer.budget += (bet*2);
                 break;
                 case (step.summ != number):
-                    createGameAlert('warning', `Вы загадывали ${number} и вы не угадали`);
+                    createGameAlert('warning', `Вы загадали <span class="badge badge-danger result">${number}</span> и вы не угадали`);
                     gamer.budget = gamer.budget - bet;
                 break;
             }
@@ -65,10 +78,10 @@ function letGame () {
     }
     switch (true) {
         case (gamer.budget <= 0):
-            createGameAlert('danger', `${gamer.name} Вы проиграли. Конец игры`);
+            createGameAlert('danger', `<span class="badge badge-danger result">${gamer.name}</span> Вы проиграли. Конец игры`);
         break;
         case (gamer.budget >= gamer.maxBudget):
-            createGameAlert('success', `${gamer.name} Вы выиграли ${gamer.budget} !`);
+            createGameAlert('success', `<span class="badge badge-success result">${gamer.name}</span> Вы выиграли <span class="badge badge-success result">${gamer.budget}</span> !`);
         break;
     }
 };
@@ -76,6 +89,7 @@ function letGame () {
 let gamer = new GetUserInfo()
 let history = [];  
 createNewGame();
+createGameAlert('primary', `Сделайте первую ставку и нажмите "Играть"`);
 game.onclick = letGame
 
 
