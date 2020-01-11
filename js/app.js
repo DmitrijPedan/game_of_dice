@@ -28,9 +28,16 @@ function updateGameInfo() {
     inputBet.max = gamer.budget;
 }
 
-function createAlertPrimary (text) {
-    let div = 
-    
+function createGameAlert (type, text) {
+    if (document.getElementById("gameAlert")){
+        gameAlert.remove();
+    }        
+    let div = document.createElement('div');
+    div.className = `alert alert-${type}`;
+    div.role ="alert";
+    div.id = "gameAlert";
+    message.prepend(div);
+    gameAlert.innerHTML = text;
 }
 
 function letGame () {
@@ -42,15 +49,15 @@ function letGame () {
         console.log(`Выпало: ${step.summ}. (${step.dice1} и ${step.dice2}).`);
             switch (true) {
                 case (step.dice1 == step.dice2 && step.summ == number):
-                    message.innerHTML=`Вы загадывали ${number}. Вы угадали и кости совпали. ставка х3`;
+                    createGameAlert('info', `Вы загадывали ${number}. Вы угадали и кости совпали. ставка х3`);
                     gamer.budget += (bet*3);
                 break;
                 case (step.summ == number):
-                    message.innerHTML=`Вы загадывали ${number} и угадали. ставка х2`;
+                    createGameAlert('success', `Вы загадывали ${number} и угадали. ставка х2`);
                     gamer.budget += (bet*2);
                 break;
                 case (step.summ != number):
-                    message.innerHTML=`Вы загадывали ${number} и вы не угадали`;
+                    createGameAlert('warning', `Вы загадывали ${number} и вы не угадали`);
                     gamer.budget = gamer.budget - bet;
                 break;
             }
@@ -58,10 +65,10 @@ function letGame () {
     }
     switch (true) {
         case (gamer.budget <= 0):
-            message.innerHTML=`${gamer.name} Вы проиграли. Конец игры`;
+            createGameAlert('danger', `${gamer.name} Вы проиграли. Конец игры`);
         break;
         case (gamer.budget >= gamer.maxBudget):
-            message.innerHTML=`${gamer.name} Вы выиграли ${gamer.budget} !`;
+            createGameAlert('success', `${gamer.name} Вы выиграли ${gamer.budget} !`);
         break;
     }
 };
@@ -70,7 +77,8 @@ let gamer = new GetUserInfo()
 let history = [];  
 createNewGame();
 game.onclick = letGame
-// newGame.onclick = window.location.reload;
+
+
 
 
 
