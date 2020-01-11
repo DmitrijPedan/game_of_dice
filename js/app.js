@@ -1,4 +1,12 @@
 
+function GetUserInfo() {
+    this.user = {name: '', budget: 0, maxBudget: 0}
+    this.user.name = 'Игрок'; //prompt('Ваше имя');
+    this.user.budget = 1000; //+prompt('Стартовый бюджет:');
+    this.user.maxBudget = 10000; //+prompt('Играем до:');
+    return this.user;
+}
+
 function RollTheDices () {
     this.value = [1, 6];
     this.getRandomValue = (min, max) =>  Math.floor(Math.random()*(max - min + 1) + min);
@@ -7,47 +15,135 @@ function RollTheDices () {
     this.summ = this.dice1 + this.dice2;
 }
 
-const newGame = function (name) {
-    let history = [];
-    let budget = 1000;
-    let maxBudget = 2000;
-   
-    while (budget > 0 && budget < maxBudget) {
-        let bet = +prompt(`${name}, ваша ставка, макс: ${budget}`);
-        let number = +prompt(`${name}, ваше число (от 2 до 12):`);
+function createNewGame() {
+    userName.innerHTML=`${gamer.name}`;
+    userMaxBudget.innerHTML=`Играем до: ${gamer.maxBudget}`;
+    updateGameInfo();    
+}
+
+function updateGameInfo() {
+    userSteps.innerHTML=`Ходов: ${history.length}`; 
+    userBudget.innerHTML=`Бюджет: ${gamer.budget}`; 
+    betLabel.innerHTML=`Сделайте ставку (от 1 до ${gamer.budget})`; 
+    inputBet.max = gamer.budget;
+}
+
+function createAlertPrimary (text) {
+    let div = 
+    
+}
+
+function letGame () {
+    if (gamer.budget > 0 && gamer.budget < gamer.maxBudget) {
+        let bet = +inputBet.value;
+        let number = +inputNumber.value;
         let step = new RollTheDices();
         history.push(step);
         console.log(`Выпало: ${step.summ}. (${step.dice1} и ${step.dice2}).`);
             switch (true) {
                 case (step.dice1 == step.dice2 && step.summ == number):
-                    console.log(`:) ${name} вы загадывали ${number}, вы угадали и кости совпали. ставка х3`);
-                    budget += (bet*3);
+                    message.innerHTML=`Вы загадывали ${number}. Вы угадали и кости совпали. ставка х3`;
+                    gamer.budget += (bet*3);
                 break;
                 case (step.summ == number):
-                    console.log(`:) ${name} вы загадывали ${number} и вы угадали. ставка х2`);
-                    budget += (bet*2);
+                    message.innerHTML=`Вы загадывали ${number} и угадали. ставка х2`;
+                    gamer.budget += (bet*2);
                 break;
                 case (step.summ != number):
-                    console.log(`:( ${name} вы загадывали ${number} и вы не угадали`);
-                    budget = budget - bet;
+                    message.innerHTML=`Вы загадывали ${number} и вы не угадали`;
+                    gamer.budget = gamer.budget - bet;
                 break;
             }
-        console.log('В бюджете осталось:',budget);
-        console.log(`======== Сделано ходов: ${history.length} ========`)
-        // console.log('====== 1 цикл while ======');
-    };
+            updateGameInfo();
+    }
     switch (true) {
-        case (budget <= 0):
-            alert(`${name} Вы проиграли`);
+        case (gamer.budget <= 0):
+            message.innerHTML=`${gamer.name} Вы проиграли. Конец игры`;
         break;
-        case (budget >= maxBudget):
-            alert(`${name} Вы выиграли ${budget} !`);
+        case (gamer.budget >= gamer.maxBudget):
+            message.innerHTML=`${gamer.name} Вы выиграли ${gamer.budget} !`;
         break;
     }
-    console.log('History', history)
-}
+};
 
-newGame('Дима');
+let gamer = new GetUserInfo()
+let history = [];  
+createNewGame();
+game.onclick = letGame
+// newGame.onclick = window.location.reload;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// const newGame = function () {
+//     let gamer = new GetUserInfo()
+//     userName.innerHTML=`${gamer.name}`;
+//     userBudget.innerHTML=`Бюджет: ${gamer.budget}`;
+//     userMaxBudget.innerHTML=`Играем до: ${gamer.maxBudget}`;
+//     let history = [];
+     
+//     while (gamer.budget > 0 && gamer.budget < gamer.maxBudget) {
+//         let bet = +prompt(`${gamer.name}, ваша ставка, макс: ${gamer.budget}`);
+//         let number = +prompt(`${gamer.name}, ваше число (от 2 до 12):`);
+//         let step = new RollTheDices();
+//         history.push(step);
+//         console.log(`Выпало: ${step.summ}. (${step.dice1} и ${step.dice2}).`);
+//             switch (true) {
+//                 case (step.dice1 == step.dice2 && step.summ == number):
+//                     console.log(`:) ${gamer.name} вы загадывали ${number}, вы угадали и кости совпали. ставка х3`);
+//                     gamer.budget += (bet*3);
+//                 break;
+//                 case (step.summ == number):
+//                     console.log(`:) ${gamer.name} вы загадывали ${number} и вы угадали. ставка х2`);
+//                     gamer.budget += (bet*2);
+//                 break;
+//                 case (step.summ != number):
+//                     console.log(`:( ${gamer.name} вы загадывали ${number} и вы не угадали`);
+//                     gamer.budget = gamer.budget - bet;
+//                 break;
+//             }
+//         console.log('В бюджете осталось:',gamer.budget);
+//         console.log(`======== Сделано ходов: ${history.length} ========`)
+//         // console.log('====== 1 цикл while ======');
+//     };
+//     switch (true) {
+//         case (gamer.budget <= 0):
+//             alert(`${gamer.name} Вы проиграли`);
+//         break;
+//         case (gamer.budget >= gamer.maxBudget):
+//             alert(`${gamer.name} Вы выиграли ${gamer.budget} !`);
+//         break;
+//     }
+//     // history
+//     document.getElementById("historyID").innerHTML=`История: ${history}`;
+//     console.log('History', history)
+// }
+
+
 
 
 
