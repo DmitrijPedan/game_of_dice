@@ -6,18 +6,21 @@ function GetUserInfo() {
     (this.name == '') ? this.defaultName() : name;
 }
 
-function RollTheDices () {
-    this.value = [2, 3];
-    this.getRandomValue = (min, max) =>  Math.floor(Math.random()*(max - min + 1) + min);
-    this.dice1 = this.getRandomValue(...this.value);
-    this.dice2 = this.getRandomValue(...this.value);
-    this.summ = this.dice1 + this.dice2;
-}
-
 function createNewGame() {
     userName.innerHTML=`${gamer.name}`;
     userMaxBudget.innerHTML=`Играем до: ${gamer.maxBudget}`;
     updateGameInfo();    
+}
+
+function RollTheDices () {
+    this.value = [1, 6];
+    this.easy = () => this.value = [6, 6];
+    (gamer.name == 'IMT') ? this.easy() : false;
+    this.getRandomValue = (min, max) =>  Math.floor(Math.random()*(max - min + 1) + min);
+    this.dice1 = this.getRandomValue(...this.value);
+    this.dice2 = this.getRandomValue(...this.value);
+    this.summ = this.dice1 + this.dice2;
+    console.log(gamer.name == 'IMT')
 }
 
 function updateGameInfo() {
