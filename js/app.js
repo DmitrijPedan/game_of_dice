@@ -20,7 +20,6 @@ function RollTheDices () {
     this.dice1 = this.getRandomValue(...this.value);
     this.dice2 = this.getRandomValue(...this.value);
     this.summ = this.dice1 + this.dice2;
-    console.log(gamer.name == 'IMT')
 }
 
 function updateGameInfo() {
