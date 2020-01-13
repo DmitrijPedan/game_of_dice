@@ -3,7 +3,7 @@ function GetUserInfo() {
     this.budget = 1000; //+prompt('Стартовый бюджет:');
     this.maxBudget = 10000; //+prompt('Играем до:');
     this.defaultName = () => {this.name = 'Игрок'};
-    (this.name == '') ? this.defaultName() : name;
+    (this.name == '' || this.name == null ) ? this.defaultName() : name;
 }
 
 function createNewGame() {
@@ -99,7 +99,7 @@ function letGame () {
             break;
         }
     } else {
-        createBetAlert('danger', `Ставка должна быть в пределах бюджета (от 1 до ${gamer.budget})`);
+        createBetAlert('danger', `Ставка должна быть в пределах бюджета (${gamer.budget})`);
     }
 };
 
