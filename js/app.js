@@ -1,112 +1,97 @@
-function GetUserInfo() {
-    this.name = prompt('Ваше имя:');;
-    this.budget = 1000; //+prompt('Стартовый бюджет:');
-    this.maxBudget = 10000; //+prompt('Играем до:');
-    this.defaultName = () => {this.name = 'Игрок'};
-    (this.name == '' || this.name == null ) ? this.defaultName() : name;
-}
-
-function createNewGame() {
-    userName.innerHTML=`${gamer.name}`;
-    userMaxBudget.innerHTML=`Играем до: ${gamer.maxBudget}`;
-    updateGameInfo();    
-}
-
 function RollTheDices () {
-    this.value = [1, 6];
-    this.easy = () => this.value = [6, 6];
-    (gamer.name == 'IMT') ? this.easy() : false;
+    this.values = name === 'IMT' ? [6, 6] : [1, 6];
     this.getRandomValue = (min, max) =>  Math.floor(Math.random()*(max - min + 1) + min);
-    this.dice1 = this.getRandomValue(...this.value);
-    this.dice2 = this.getRandomValue(...this.value);
+    this.dice1 = this.getRandomValue(...this.values);
+    this.dice2 = this.getRandomValue(...this.values);
     this.summ = this.dice1 + this.dice2;
 }
 
-function updateGameInfo() {
-    userSteps.innerHTML=`Ходов: ${history.length}`; 
-    userBudget.innerHTML=`Бюджет: ${gamer.budget}`; 
-    betLabel.innerHTML=`Сделайте ставку (от 1 до ${gamer.budget})`; 
-    inputBet.max = gamer.budget;
+
+const updateGameInfo = () => {
+    document.getElementById('userSteps').innerHTML=`Ходов: ${stephistory}`; 
+    document.getElementById('userBudget').innerHTML=`Бюджет: ${budget}`; 
+    document.getElementById('betLabel').innerHTML=`Сделайте ставку (от 1 до ${budget})`; 
+    document.getElementById('inputBet').max = budget;
 }
 
-function createGameAlert (type, text) {
-    document.getElementById("gameAlert") ? gameAlert.remove() : false;    
-    let div = document.createElement('div');
-    div.className = `alert alert-${type}`;
-    div.role ="alert";
-    div.id = "gameAlert";
-    message.prepend(div);
-    gameAlert.innerHTML = text;
+const createHTMLNode = (tag, attrs, inner) => {
+    const element = document.createElement(tag);
+    attrs.map(attr => {element.setAttribute(attr.name, attr.value.join(' '))});
+    inner ? (Array.isArray(inner) ? inner.map(el => element.appendChild(el)) : element.innerHTML=inner) : null;
+    return element;
+};
+
+const createGameAlert = (type, text, span) => {
+    document.getElementById("gameAlert") && document.getElementById("gameAlert").remove()
+    const div = createHTMLNode('div', [
+        {name: 'class', value: [`alert alert-${type}`, 'game-message']}, 
+        {name: 'role', value: ['alert']}, 
+        {name: 'id', value: ['gameAlert']}], text);
+    document.getElementById("message").appendChild(div);
 }
 
-function createDicesAlert (type, text) {
-    clearMessage ();  
-    let div = document.createElement('div');
-    div.className = `alert alert-${type}`;
-    div.role ="alert";
-    div.id = "diceAlert";
-    message.prepend(div);
-    diceAlert.innerHTML = text;
+const createDicesAlert = (type, text) => {
+    [...document.getElementsByClassName('game-message')].map(el => el.remove());
+    const div = createHTMLNode('div', [
+        {name: 'class', value: [`alert alert-${type}`, 'game-message']}, 
+        {name: 'role', value: ['alert']}, 
+        {name: 'id', value: ['diceAlert']}], text)
+    document.getElementById("message").appendChild(div);
 }
 
-function createBetAlert (type, text) {
-    clearMessage ()      
-    let div = document.createElement('div');
-    div.className = `alert alert-${type}`;
-    div.role ="alert";
-    div.id = "betAlert";
-    message.prepend(div);
-    betAlert.innerHTML = text;
+const createBetAlert = (type, text) => {
+    [...document.getElementsByClassName('game-message')].map(el => el.remove());
+    const div = createHTMLNode('div', [
+        {name: 'class', value: [`alert alert-${type}`, 'game-message']}, 
+        {name: 'role', value: ['alert']}, 
+        {name: 'id', value: ['betAlert']}], text)
+    document.getElementById("message").appendChild(div);
 }
 
-function clearMessage () {
-    document.getElementById("gameAlert") ? gameAlert.remove() : false;
-    document.getElementById("diceAlert") ? diceAlert.remove() : false;
-    document.getElementById("betAlert") ? betAlert.remove() : false;
-}
-
-function letGame () {
-   if (+inputBet.value > 0 && +inputBet.value <= gamer.budget) 
-    {
-        if (gamer.budget > 0 && gamer.budget < gamer.maxBudget) {
+const letGame = () => {
+   if (+inputBet.value > 0 && +inputBet.value <= budget) {
+        if (budget > 0 && budget < maxBudget) {
             let bet = +inputBet.value;
             let number = +inputNumber.value;
             let step = new RollTheDices();
-            history.push(step);
+            stephistory += 1;
             createDicesAlert('primary', `Выпало <span class="badge badge-primary result">${step.summ}</span> (${step.dice1} и ${step.dice2}).`);
                 switch (true) {
                     case (step.dice1 == step.dice2 && step.summ == number):
                         createGameAlert('info', `Вы загадали <span class="badge badge-info result">${number}</span>. Вы угадали и кости совпали! ставка х3`);
-                        gamer.budget += (bet*3);
+                        budget += (bet*3);
                     break;
                     case (step.summ == number):
                         createGameAlert('success', `Вы загадали <span class="badge badge-success result">${number}</span> и угадали. ставка х2`);
-                        gamer.budget += (bet*2);
+                        budget += (bet*2);
                     break;
                     case (step.summ != number):
                         createGameAlert('warning', `Вы загадали <span class="badge badge-danger result">${number}</span> и вы не угадали`);
-                        gamer.budget = gamer.budget - bet;
+                        budget = budget - bet;
                     break;
                 }
-                updateGameInfo();
+            updateGameInfo();
         }
         switch (true) {
-            case (gamer.budget <= 0):
-                createGameAlert('danger', `<span class="badge badge-danger result">${gamer.name}</span> Вы проиграли. Конец игры`);
+            case (budget <= 0):
+                createGameAlert('danger', `<span class="badge badge-danger result">${name}</span> Вы проиграли. Конец игры`);
             break;
-            case (gamer.budget >= gamer.maxBudget):
-                createGameAlert('success', `Поздравляем! <span class="badge badge-success result">${gamer.name}</span> Вы выиграли <span class="badge badge-success result">${gamer.budget}</span> !`);
+            case (budget >= maxBudget):
+                createGameAlert('success', `Поздравляем! <span class="badge badge-success result">${name}</span> Вы выиграли <span class="badge badge-success result">${budget}</span> !`);
             break;
         }
     } else {
-        createBetAlert('danger', `Ставка должна быть в пределах бюджета (${gamer.budget})`);
+        createBetAlert('danger', `Ставка должна быть в пределах бюджета (${budget})`);
     }
 };
 
-let gamer = new GetUserInfo()
-let history = [];  
-createNewGame();
-createGameAlert('primary', `Сделайте первую ставку и нажмите "Играть"`);
-game.onclick = letGame
-
-// https://dmitrijpedan.github.io/game_of_dice/
+const name = prompt('Ваше имя:') || 'Игрок';
+let stephistory = 0; 
+let budget = 2000; 
+const maxBudget = 10000;
+const inputBet = document.getElementById('inputBet');
+document.getElementById('userName').innerHTML = `${name}`;
+document.getElementById('userMaxBudget').innerHTML = `Играем до: ${maxBudget}`; 
+document.getElementById('game').onclick = letGame;
+updateGameInfo();   
+createGameAlert('primary', 'Сделайте первую ставку и нажмите "Играть');
